@@ -1,0 +1,7 @@
+com\notes\controller\CharacterController.class
+com\notes\NotesApplication.class
+com\notes\model\Species.class
+com\notes\model\Character.class
+com\notes\NotesApplication$1.class
+com\notes\repository\SpeciesRepository.class
+com\notes\repository\CharacterRepository.class
