@@ -2,8 +2,10 @@ package com.notes.controller;
 
 import com.notes.model.Character;
 import com.notes.model.Species;
+import com.notes.model.Trait;
 import com.notes.repository.CharacterRepository;
 import com.notes.repository.SpeciesRepository;
+import com.notes.config.SpeciesConfig;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,17 +34,16 @@ public class CharacterController {
             if (speciesRepository.count() == 0) {
                 logger.info("Initializing species data...");
 
-                Species human = new Species();
-                human.setName("HUMAN");
-                human.setTraits(Arrays.asList("Adaptable", "Resourceful", "Ambitious"));
-                Species savedHuman = speciesRepository.save(human);
-                logger.info("Created HUMAN species with ID: {}", savedHuman.getId());
-
-                Species elf = new Species();
-                elf.setName("ELF");
-                elf.setTraits(Arrays.asList("Long-lived", "Keen Senses", "Graceful"));
-                Species savedElf = speciesRepository.save(elf);
-                logger.info("Created ELF species with ID: {}", savedElf.getId());
+                // Create and save each species
+                for (String speciesName : SpeciesConfig.getAllSpeciesNames()) {
+                    try {
+                        Species species = SpeciesConfig.createSpecies(speciesName);
+                        Species savedSpecies = speciesRepository.save(species);
+                        logger.info("Created {} species with ID: {}", speciesName, savedSpecies.getId());
+                    } catch (Exception e) {
+                        logger.error("Error creating species {}: {}", speciesName, e.getMessage());
+                    }
+                }
 
                 logger.info("Species initialization complete");
             } else {
@@ -59,8 +60,16 @@ public class CharacterController {
     }
 
     @GetMapping("/species")
-    public List<Species> getAllSpecies() {
-        return speciesRepository.findAll();
+    public ResponseEntity<?> getAllSpecies() {
+        try {
+            logger.info("Fetching all species with traits...");
+            List<Species> species = speciesRepository.findAllWithTraits();
+            logger.info("Found {} species", species.size());
+            return ResponseEntity.ok(species);
+        } catch (Exception e) {
+            logger.error("Error fetching species", e);
+            return ResponseEntity.internalServerError().body("Error fetching species: " + e.getMessage());
+        }
     }
 
     @PostMapping("/characters")
@@ -85,13 +94,13 @@ public class CharacterController {
                 return ResponseEntity.badRequest().body(message);
             }
 
-            // Look up species by UUID
-            Species species = speciesRepository.findById(UUID.fromString(speciesId))
-                    .orElseThrow(() -> {
-                        String message = "Species not found with ID: " + speciesId;
-                        logger.error(message);
-                        return new RuntimeException(message);
-                    });
+            // Look up species by UUID with traits
+            Species species = speciesRepository.findByIdWithTraits(UUID.fromString(speciesId));
+            if (species == null) {
+                String message = "Species not found with ID: " + speciesId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
 
             // Create new character
             Character character = new Character();
@@ -140,8 +149,12 @@ public class CharacterController {
                 return ResponseEntity.badRequest().body(message);
             }
 
-            Species species = speciesRepository.findById(UUID.fromString(speciesId))
-                    .orElseThrow(() -> new RuntimeException("Species not found with ID: " + speciesId));
+            Species species = speciesRepository.findByIdWithTraits(UUID.fromString(speciesId));
+            if (species == null) {
+                String message = "Species not found with ID: " + speciesId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
 
             character.setName(name);
             character.setSpecies(species);

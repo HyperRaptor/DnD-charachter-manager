@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTrash, FaEdit, FaSave, FaPlus, FaTimes, FaExclamationTriangle } from 'react-icons/fa';
 
+interface Trait {
+  id: string;
+  title: string;
+  description: string;
+}
+
 interface Species {
   id: string;
   name: string;
-  traits: string[];
+  traits: Trait[];
 }
 
 interface Character {
@@ -231,8 +237,12 @@ function App() {
                   ))}
                 </select>
                 {newCharacterSpecies && (
-                  <div className="mt-2 text-xs text-gray-600">
-                    Traits: {newCharacterSpecies.traits.join(', ')}
+                  <div className="mt-2 space-y-2">
+                    {newCharacterSpecies.traits.map(trait => (
+                      <div key={trait.id} className="text-sm text-gray-600">
+                        <span className="font-semibold">{trait.title}:</span> {trait.description}
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -328,9 +338,13 @@ function App() {
                   <p className="text-sm text-gray-500">
                     {character.species.name}
                   </p>
-                  <p className="text-xs text-gray-400">
-                    Traits: {character.species.traits.join(', ')}
-                  </p>
+                  <div className="text-xs text-gray-400 space-y-1">
+                    {character.species.traits.map(trait => (
+                      <div key={trait.id}>
+                        <span className="font-semibold">{trait.title}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
@@ -368,21 +382,33 @@ function App() {
                             ))}
                           </select>
                           {editSpecies && (
-                            <span className="text-xs text-gray-600">
-                              Traits: {editSpecies.traits.join(', ')}
-                            </span>
+                            <div className="text-sm text-gray-600 space-y-2">
+                              {editSpecies.traits.map(trait => (
+                                <div key={trait.id}>
+                                  <span className="font-semibold">{trait.title}:</span> {trait.description}
+                                </div>
+                              ))}
+                            </div>
                           )}
                         </div>
                       </>
                     ) : (
                       <>
                         <h1 className="text-2xl font-bold">{selectedCharacter.name}</h1>
-                        <div className="flex items-center space-x-4">
-                          <span className="font-medium">Species:</span>
-                          <span>{selectedCharacter.species.name}</span>
-                          <span className="text-xs text-gray-600">
-                            Traits: {selectedCharacter.species.traits.join(', ')}
-                          </span>
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-4">
+                            <span className="font-medium">Species:</span>
+                            <span>{selectedCharacter.species.name}</span>
+                          </div>
+                          <div className="space-y-2">
+                            <h3 className="font-semibold">Traits:</h3>
+                            {selectedCharacter.species.traits.map(trait => (
+                              <div key={trait.id} className="pl-4 border-l-2 border-gray-200">
+                                <h4 className="font-medium text-gray-700">{trait.title}</h4>
+                                <p className="text-sm text-gray-600">{trait.description}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </>
                     )}

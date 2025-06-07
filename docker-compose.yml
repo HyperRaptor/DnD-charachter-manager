@@ -24,7 +24,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/notesdb
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 
   db:
     image: postgres:15-alpine
@@ -33,9 +33,4 @@ services:
     environment:
       - POSTGRES_DB=notesdb
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data: 
+      - POSTGRES_PASSWORD=postgres 

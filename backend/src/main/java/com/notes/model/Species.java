@@ -3,8 +3,10 @@ package com.notes.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
 import java.util.List;
 import java.util.UUID;
@@ -18,8 +20,9 @@ public class Species {
     @Column(unique = true, nullable = false)
     private String name;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> traits;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "species", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Trait> traits;
 
     public Species() {
         this.id = UUID.randomUUID();
