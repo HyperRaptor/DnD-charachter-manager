@@ -22,6 +22,8 @@ public class BackgroundConfig {
 
         // Criminal background
         BACKGROUND_FEATURES.put("Criminal", Arrays.asList(
+            new FeatureDefinition("Skill Proficiencies", "Sleight of hand, Stealth"),
+            new FeatureDefinition("Tool Proficiencies", "Thieves’ Tools"),
             new FeatureDefinition("Equipment", "Choose A or B: (A) 2 Daggers, Thieves’ Tools, Crowbar, 2 Pouches, Traveler’s Clothes, 16 GP; or (B) 50 GP"),
             new FeatureDefinition("Ability Scores", "Dexterity, Constitution, Intelligence"),
             new FeatureDefinition("Feat", "Alert")
