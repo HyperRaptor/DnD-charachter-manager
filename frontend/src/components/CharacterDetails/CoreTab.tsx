@@ -6,16 +6,40 @@ interface CoreTabProps {
   onHpChange: (field: 'temporaryHp' | 'currentHp' | 'maxHp', value: number) => void;
   onSpeedChange: (value: number) => void;
   onAbilityScoreChange: (ability: string, value: number) => void;
+  onLevelChange: (newLevel: number) => void;
 }
 
 const CoreTab: React.FC<CoreTabProps> = ({
   character,
   onHpChange,
   onSpeedChange,
-  onAbilityScoreChange
+  onAbilityScoreChange,
+  onLevelChange
 }) => {
   return (
     <div className="space-y-6">
+      {/* Level Section */}
+      <div className="space-y-4">
+        <h4 className="font-medium">Level</h4>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={() => onLevelChange(character.level - 1)}
+            disabled={character.level <= 1}
+            className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            -
+          </button>
+          <span className="text-2xl font-bold w-12 text-center">{character.level}</span>
+          <button
+            onClick={() => onLevelChange(character.level + 1)}
+            disabled={character.level >= 20}
+            className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            +
+          </button>
+        </div>
+      </div>
+
       {/* HP and Speed Section */}
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-4">

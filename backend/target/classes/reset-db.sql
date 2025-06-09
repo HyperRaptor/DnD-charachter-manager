@@ -27,5 +27,6 @@ CREATE TABLE character (
     charisma INTEGER NOT NULL DEFAULT 0,
     coins TEXT DEFAULT '{"platinum":0,"gold":0,"electrum":0,"silver":0,"copper":0}',
     items TEXT DEFAULT '[]',
+    details TEXT DEFAULT '{"background":"","classFeatures":"","speciesFeatures":"","otherFeatures":"","notes":"","connections":""}',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ); 

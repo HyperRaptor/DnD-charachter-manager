@@ -61,5 +61,6 @@ export interface Character {
   charismaModifier: number;
   coins: string;
   items: string;
+  details: string;
   createdAt: string;
 } 

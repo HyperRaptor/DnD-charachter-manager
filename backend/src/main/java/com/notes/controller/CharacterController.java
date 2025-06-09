@@ -351,6 +351,7 @@ public class CharacterController {
             String charismaStr = request.get("charisma");
             String coins = request.get("coins");
             String items = request.get("items");
+            String details = request.get("details");
 
             if (name == null || name.trim().isEmpty()) {
                 String message = "Character name cannot be empty";
@@ -385,6 +386,12 @@ public class CharacterController {
             if (items != null) {
                 character.setItems(items);
                 logger.info("Updating character items to: {}", items);
+            }
+
+            // Handle details updates
+            if (details != null) {
+                character.setDetails(details);
+                logger.info("Updating character details to: {}", details);
             }
 
             // Handle level update
@@ -635,6 +642,28 @@ public class CharacterController {
         } catch (Exception e) {
             logger.error("Error updating character inventory", e);
             return ResponseEntity.internalServerError().body("Error updating character inventory: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/details")
+    public ResponseEntity<?> updateCharacterDetails(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String details = request.get("details");
+
+            if (details != null) {
+                character.setDetails(details);
+                logger.info("Updating character details to: {}", details);
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character details: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character details", e);
+            return ResponseEntity.internalServerError().body("Error updating character details: " + e.getMessage());
         }
     }
 

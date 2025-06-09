@@ -4,6 +4,7 @@ import { Character, Species, Background, CharacterClass } from '../../types/char
 import CoreTab from './CoreTab';
 import ReferenceTab from './ReferenceTab';
 import InventoryTab from './InventoryTab';
+import DetailsTab from './DetailsTab';
 
 interface CharacterDetailsProps {
   character: Character;
@@ -31,7 +32,7 @@ interface CharacterDetailsProps {
   onCharacterUpdated: (character: Character) => void;
 }
 
-type TabType = 'core' | 'reference' | 'inventory';
+type TabType = 'core' | 'reference' | 'inventory' | 'details';
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   character,
@@ -165,32 +166,6 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
           <>
             <div className="flex justify-between items-center mb-6">
               <h1 className="text-2xl font-bold">{character.name}</h1>
-              <div className="flex items-center space-x-4">
-                <label className="font-medium">Level:</label>
-                <div className="flex items-center space-x-2">
-                  <button
-                    onClick={() => {
-                      console.log('Decrease level clicked. Current level:', character.level);
-                      onLevelChange(character.level - 1);
-                    }}
-                    disabled={character.level <= 1}
-                    className="p-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    -
-                  </button>
-                  <span className="w-8 text-center">{character.level}</span>
-                  <button
-                    onClick={() => {
-                      console.log('Increase level clicked. Current level:', character.level);
-                      onLevelChange(character.level + 1);
-                    }}
-                    disabled={character.level >= 20}
-                    className="p-1 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* Tab Navigation */}
@@ -226,6 +201,16 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 >
                   Inventory
                 </button>
+                <button
+                  onClick={() => setActiveTab('details')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'details'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Details
+                </button>
               </nav>
             </div>
 
@@ -236,6 +221,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 onHpChange={onHpChange}
                 onSpeedChange={onSpeedChange}
                 onAbilityScoreChange={onAbilityScoreChange}
+                onLevelChange={onLevelChange}
               />
             )}
             {activeTab === 'reference' && (
@@ -243,6 +229,13 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
             )}
             {activeTab === 'inventory' && (
               <InventoryTab 
+                character={character} 
+                apiUrl={apiUrl}
+                onCharacterUpdated={onCharacterUpdated}
+              />
+            )}
+            {activeTab === 'details' && (
+              <DetailsTab 
                 character={character} 
                 apiUrl={apiUrl}
                 onCharacterUpdated={onCharacterUpdated}

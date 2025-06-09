@@ -77,6 +77,9 @@ public class Character {
     @Column(columnDefinition = "TEXT")
     private String items = "[]";
 
+    @Column(columnDefinition = "TEXT")
+    private String details = "{\"background\":\"\",\"classFeatures\":\"\",\"speciesFeatures\":\"\",\"otherFeatures\":\"\",\"notes\":\"\",\"connections\":\"\"}";
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Add methods to calculate ability score modifiers
