@@ -349,6 +349,8 @@ public class CharacterController {
             String intelligenceStr = request.get("intelligence");
             String wisdomStr = request.get("wisdom");
             String charismaStr = request.get("charisma");
+            String coins = request.get("coins");
+            String items = request.get("items");
 
             if (name == null || name.trim().isEmpty()) {
                 String message = "Character name cannot be empty";
@@ -372,6 +374,17 @@ public class CharacterController {
                 String message = "Class ID cannot be null";
                 logger.error(message);
                 return ResponseEntity.badRequest().body(message);
+            }
+
+            // Handle inventory updates
+            if (coins != null) {
+                character.setCoins(coins);
+                logger.info("Updating character coins to: {}", coins);
+            }
+
+            if (items != null) {
+                character.setItems(items);
+                logger.info("Updating character items to: {}", items);
             }
 
             // Handle level update
@@ -594,6 +607,34 @@ public class CharacterController {
         } catch (Exception e) {
             logger.error("Error updating character", e);
             return ResponseEntity.internalServerError().body("Error updating character: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/inventory")
+    public ResponseEntity<?> updateCharacterInventory(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String coins = request.get("coins");
+            String items = request.get("items");
+
+            if (coins != null) {
+                character.setCoins(coins);
+                logger.info("Updating character coins to: {}", coins);
+            }
+
+            if (items != null) {
+                character.setItems(items);
+                logger.info("Updating character items to: {}", items);
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character inventory: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character inventory", e);
+            return ResponseEntity.internalServerError().body("Error updating character inventory: " + e.getMessage());
         }
     }
 

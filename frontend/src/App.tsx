@@ -383,6 +383,13 @@ function App() {
           isEditing={isEditing}
           setIsEditing={handleStartEditing}
           onSave={handleUpdateCharacter}
+          apiUrl={apiUrl}
+          onCharacterUpdated={(updatedCharacter) => {
+            setCharacters(characters.map(char => 
+              char.id === updatedCharacter.id ? updatedCharacter : char
+            ));
+            setSelectedCharacter(updatedCharacter);
+          }}
         />
       )}
 

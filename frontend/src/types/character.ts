@@ -59,5 +59,7 @@ export interface Character {
   intelligenceModifier: number;
   wisdomModifier: number;
   charismaModifier: number;
+  coins: string;
+  items: string;
   createdAt: string;
 } 

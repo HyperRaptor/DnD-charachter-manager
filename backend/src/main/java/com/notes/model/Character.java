@@ -71,6 +71,12 @@ public class Character {
     @Column(nullable = false)
     private Integer charisma = 0;
 
+    @Column(columnDefinition = "TEXT")
+    private String coins = "{\"platinum\":0,\"gold\":0,\"electrum\":0,\"silver\":0,\"copper\":0}";
+
+    @Column(columnDefinition = "TEXT")
+    private String items = "[]";
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Add methods to calculate ability score modifiers
