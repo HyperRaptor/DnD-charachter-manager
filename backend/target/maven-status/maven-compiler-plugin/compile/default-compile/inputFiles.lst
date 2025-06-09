@@ -1,6 +1,17 @@
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\config\BackgroundConfig.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\config\ClassConfig.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\Character.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\Trait.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\repository\SpeciesRepository.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\repository\CharacterRepository.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\controller\CharacterController.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\Species.java
 C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\NotesApplication.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\CharacterClass.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\repository\BackgroundRepository.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\repository\CharacterClassRepository.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\BackgroundFeature.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\ClassFeature.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\model\Background.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\config\SpeciesConfig.java
+C:\Users\Moni\Documents\GitHub\DnD-charachter-manager\backend\src\main\java\com\notes\repository\TraitRepository.java

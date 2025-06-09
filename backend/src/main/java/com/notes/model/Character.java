@@ -28,5 +28,78 @@ public class Character {
     @NotNull
     private Species species;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "background_id")
+    @NotNull
+    private Background background;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "class_id")
+    @NotNull
+    private CharacterClass characterClass;
+
+    @Column(nullable = false)
+    private Integer level = 1;
+
+    @Column(nullable = false)
+    private Integer temporaryHp = 0;
+
+    @Column(nullable = false)
+    private Integer currentHp = 0;
+
+    @Column(nullable = false)
+    private Integer maxHp = 0;
+
+    @Column(nullable = false)
+    private Integer speed = 0;
+
+    @Column(nullable = false)
+    private Integer strength = 0;
+
+    @Column(nullable = false)
+    private Integer dexterity = 0;
+
+    @Column(nullable = false)
+    private Integer constitution = 0;
+
+    @Column(nullable = false)
+    private Integer intelligence = 0;
+
+    @Column(nullable = false)
+    private Integer wisdom = 0;
+
+    @Column(nullable = false)
+    private Integer charisma = 0;
+
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    // Add methods to calculate ability score modifiers
+    public Integer getStrengthModifier() {
+        return calculateModifier(strength);
+    }
+
+    public Integer getDexterityModifier() {
+        return calculateModifier(dexterity);
+    }
+
+    public Integer getConstitutionModifier() {
+        return calculateModifier(constitution);
+    }
+
+    public Integer getIntelligenceModifier() {
+        return calculateModifier(intelligence);
+    }
+
+    public Integer getWisdomModifier() {
+        return calculateModifier(wisdom);
+    }
+
+    public Integer getCharismaModifier() {
+        return calculateModifier(charisma);
+    }
+
+    private Integer calculateModifier(Integer score) {
+        if (score == null) return 0;
+        return (score - 10) / 2;
+    }
 } 

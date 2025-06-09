@@ -2,10 +2,15 @@ package com.notes.controller;
 
 import com.notes.model.Character;
 import com.notes.model.Species;
-import com.notes.model.Trait;
+import com.notes.model.Background;
+import com.notes.model.CharacterClass;
 import com.notes.repository.CharacterRepository;
 import com.notes.repository.SpeciesRepository;
+import com.notes.repository.BackgroundRepository;
+import com.notes.repository.CharacterClassRepository;
 import com.notes.config.SpeciesConfig;
+import com.notes.config.BackgroundConfig;
+import com.notes.config.ClassConfig;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +32,18 @@ public class CharacterController {
     @Autowired
     private SpeciesRepository speciesRepository;
 
+    @Autowired
+    private BackgroundRepository backgroundRepository;
+
+    @Autowired
+    private CharacterClassRepository characterClassRepository;
+
     @PostConstruct
     public void init() {
         try {
             // Initialize species if they don't exist
             if (speciesRepository.count() == 0) {
                 logger.info("Initializing species data...");
-
-                // Create and save each species
                 for (String speciesName : SpeciesConfig.getAllSpeciesNames()) {
                     try {
                         Species species = SpeciesConfig.createSpecies(speciesName);
@@ -44,13 +53,46 @@ public class CharacterController {
                         logger.error("Error creating species {}: {}", speciesName, e.getMessage());
                     }
                 }
-
                 logger.info("Species initialization complete");
             } else {
                 logger.info("Species already exist, skipping initialization");
             }
+
+            // Initialize backgrounds if they don't exist
+            if (backgroundRepository.count() == 0) {
+                logger.info("Initializing background data...");
+                for (String backgroundName : BackgroundConfig.getAllBackgroundNames()) {
+                    try {
+                        Background background = BackgroundConfig.createBackground(backgroundName);
+                        Background savedBackground = backgroundRepository.save(background);
+                        logger.info("Created {} background with ID: {}", backgroundName, savedBackground.getId());
+                    } catch (Exception e) {
+                        logger.error("Error creating background {}: {}", backgroundName, e.getMessage());
+                    }
+                }
+                logger.info("Background initialization complete");
+            } else {
+                logger.info("Backgrounds already exist, skipping initialization");
+            }
+
+            // Initialize classes if they don't exist
+            if (characterClassRepository.count() == 0) {
+                logger.info("Initializing class data...");
+                for (String className : ClassConfig.getAllClassNames()) {
+                    try {
+                        CharacterClass characterClass = ClassConfig.createClass(className);
+                        CharacterClass savedClass = characterClassRepository.save(characterClass);
+                        logger.info("Created {} class with ID: {}", className, savedClass.getId());
+                    } catch (Exception e) {
+                        logger.error("Error creating class {}: {}", className, e.getMessage());
+                    }
+                }
+                logger.info("Class initialization complete");
+            } else {
+                logger.info("Classes already exist, skipping initialization");
+            }
         } catch (Exception e) {
-            logger.error("Error initializing species", e);
+            logger.error("Error initializing data", e);
         }
     }
 
@@ -72,6 +114,32 @@ public class CharacterController {
         }
     }
 
+    @GetMapping("/backgrounds")
+    public ResponseEntity<?> getAllBackgrounds() {
+        try {
+            logger.info("Fetching all backgrounds with features...");
+            List<Background> backgrounds = backgroundRepository.findAllWithFeatures();
+            logger.info("Found {} backgrounds", backgrounds.size());
+            return ResponseEntity.ok(backgrounds);
+        } catch (Exception e) {
+            logger.error("Error fetching backgrounds", e);
+            return ResponseEntity.internalServerError().body("Error fetching backgrounds: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/classes")
+    public ResponseEntity<?> getAllClasses() {
+        try {
+            logger.info("Fetching all classes with features...");
+            List<CharacterClass> classes = characterClassRepository.findAllWithFeatures();
+            logger.info("Found {} classes", classes.size());
+            return ResponseEntity.ok(classes);
+        } catch (Exception e) {
+            logger.error("Error fetching classes", e);
+            return ResponseEntity.internalServerError().body("Error fetching classes: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/characters")
     public ResponseEntity<?> createCharacter(@RequestBody Map<String, String> request) {
         try {
@@ -79,25 +147,58 @@ public class CharacterController {
             
             String name = request.get("name");
             String speciesId = request.get("speciesId");
+            String backgroundId = request.get("backgroundId");
+            String classId = request.get("classId");
+            String strengthStr = request.get("strength");
+            String dexterityStr = request.get("dexterity");
+            String constitutionStr = request.get("constitution");
+            String intelligenceStr = request.get("intelligence");
+            String wisdomStr = request.get("wisdom");
+            String charismaStr = request.get("charisma");
 
-            // Check for null character name
+            // Check for null values
             if (name == null || name.trim().isEmpty()) {
                 String message = "Character name cannot be empty";
                 logger.error(message);
                 return ResponseEntity.badRequest().body(message);
             }
 
-            // Check for null species ID
             if (speciesId == null) {
                 String message = "Species ID cannot be null";
                 logger.error(message);
                 return ResponseEntity.badRequest().body(message);
             }
 
-            // Look up species by UUID with traits
+            if (backgroundId == null) {
+                String message = "Background ID cannot be null";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            if (classId == null) {
+                String message = "Class ID cannot be null";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            // Look up species, background, and class
             Species species = speciesRepository.findByIdWithTraits(UUID.fromString(speciesId));
             if (species == null) {
                 String message = "Species not found with ID: " + speciesId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            Background background = backgroundRepository.findByIdWithFeatures(UUID.fromString(backgroundId));
+            if (background == null) {
+                String message = "Background not found with ID: " + backgroundId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            CharacterClass characterClass = characterClassRepository.findByIdWithFeatures(UUID.fromString(classId));
+            if (characterClass == null) {
+                String message = "Class not found with ID: " + classId;
                 logger.error(message);
                 return ResponseEntity.badRequest().body(message);
             }
@@ -106,12 +207,111 @@ public class CharacterController {
             Character character = new Character();
             character.setName(name);
             character.setSpecies(species);
+            character.setBackground(background);
+            character.setCharacterClass(characterClass);
+
+            // Handle ability scores
+            if (strengthStr != null) {
+                try {
+                    int strength = Integer.parseInt(strengthStr);
+                    if (strength < 0) {
+                        String message = "Strength cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setStrength(strength);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid strength format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (dexterityStr != null) {
+                try {
+                    int dexterity = Integer.parseInt(dexterityStr);
+                    if (dexterity < 0) {
+                        String message = "Dexterity cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setDexterity(dexterity);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid dexterity format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (constitutionStr != null) {
+                try {
+                    int constitution = Integer.parseInt(constitutionStr);
+                    if (constitution < 0) {
+                        String message = "Constitution cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setConstitution(constitution);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid constitution format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (intelligenceStr != null) {
+                try {
+                    int intelligence = Integer.parseInt(intelligenceStr);
+                    if (intelligence < 0) {
+                        String message = "Intelligence cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setIntelligence(intelligence);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid intelligence format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (wisdomStr != null) {
+                try {
+                    int wisdom = Integer.parseInt(wisdomStr);
+                    if (wisdom < 0) {
+                        String message = "Wisdom cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setWisdom(wisdom);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid wisdom format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (charismaStr != null) {
+                try {
+                    int charisma = Integer.parseInt(charismaStr);
+                    if (charisma < 0) {
+                        String message = "Charisma cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setCharisma(charisma);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid charisma format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
             
             Character savedCharacter = characterRepository.save(character);
             logger.info("Successfully created character: {}", savedCharacter);
             return ResponseEntity.ok(savedCharacter);
         } catch (IllegalArgumentException e) {
-            String message = "Invalid species ID format";
+            String message = "Invalid UUID format";
             logger.error(message, e);
             return ResponseEntity.badRequest().body(message);
         } catch (Exception e) {
@@ -136,6 +336,19 @@ public class CharacterController {
 
             String name = request.get("name");
             String speciesId = request.get("speciesId");
+            String backgroundId = request.get("backgroundId");
+            String classId = request.get("classId");
+            String levelStr = request.get("level");
+            String tempHpStr = request.get("temporaryHp");
+            String currentHpStr = request.get("currentHp");
+            String maxHpStr = request.get("maxHp");
+            String speedStr = request.get("speed");
+            String strengthStr = request.get("strength");
+            String dexterityStr = request.get("dexterity");
+            String constitutionStr = request.get("constitution");
+            String intelligenceStr = request.get("intelligence");
+            String wisdomStr = request.get("wisdom");
+            String charismaStr = request.get("charisma");
 
             if (name == null || name.trim().isEmpty()) {
                 String message = "Character name cannot be empty";
@@ -149,6 +362,202 @@ public class CharacterController {
                 return ResponseEntity.badRequest().body(message);
             }
 
+            if (backgroundId == null) {
+                String message = "Background ID cannot be null";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            if (classId == null) {
+                String message = "Class ID cannot be null";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            // Handle level update
+            if (levelStr != null) {
+                try {
+                    int level = Integer.parseInt(levelStr);
+                    if (level < 1 || level > 20) {
+                        String message = "Level must be between 1 and 20";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setLevel(level);
+                    logger.info("Updating character level to: {}", level);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid level format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            // Handle HP and speed updates
+            if (tempHpStr != null) {
+                try {
+                    int tempHp = Integer.parseInt(tempHpStr);
+                    if (tempHp < 0) {
+                        String message = "Temporary HP cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setTemporaryHp(tempHp);
+                    logger.info("Updating character temporary HP to: {}", tempHp);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid temporary HP format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (currentHpStr != null) {
+                try {
+                    int currentHp = Integer.parseInt(currentHpStr);
+                    if (currentHp < 0) {
+                        String message = "Current HP cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setCurrentHp(currentHp);
+                    logger.info("Updating character current HP to: {}", currentHp);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid current HP format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (maxHpStr != null) {
+                try {
+                    int maxHp = Integer.parseInt(maxHpStr);
+                    if (maxHp < 0) {
+                        String message = "Maximum HP cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setMaxHp(maxHp);
+                    logger.info("Updating character maximum HP to: {}", maxHp);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid maximum HP format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (speedStr != null) {
+                try {
+                    int speed = Integer.parseInt(speedStr);
+                    if (speed < 0) {
+                        String message = "Speed cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setSpeed(speed);
+                    logger.info("Updating character speed to: {}", speed);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid speed format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            // Handle ability score updates
+            if (strengthStr != null) {
+                try {
+                    int strength = Integer.parseInt(strengthStr);
+                    if (strength < 0) {
+                        String message = "Strength cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setStrength(strength);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid strength format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (dexterityStr != null) {
+                try {
+                    int dexterity = Integer.parseInt(dexterityStr);
+                    if (dexterity < 0) {
+                        String message = "Dexterity cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setDexterity(dexterity);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid dexterity format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (constitutionStr != null) {
+                try {
+                    int constitution = Integer.parseInt(constitutionStr);
+                    if (constitution < 0) {
+                        String message = "Constitution cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setConstitution(constitution);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid constitution format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (intelligenceStr != null) {
+                try {
+                    int intelligence = Integer.parseInt(intelligenceStr);
+                    if (intelligence < 0) {
+                        String message = "Intelligence cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setIntelligence(intelligence);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid intelligence format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (wisdomStr != null) {
+                try {
+                    int wisdom = Integer.parseInt(wisdomStr);
+                    if (wisdom < 0) {
+                        String message = "Wisdom cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setWisdom(wisdom);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid wisdom format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            if (charismaStr != null) {
+                try {
+                    int charisma = Integer.parseInt(charismaStr);
+                    if (charisma < 0) {
+                        String message = "Charisma cannot be negative";
+                        logger.error(message);
+                        return ResponseEntity.badRequest().body(message);
+                    }
+                    character.setCharisma(charisma);
+                } catch (NumberFormatException e) {
+                    String message = "Invalid charisma format";
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
             Species species = speciesRepository.findByIdWithTraits(UUID.fromString(speciesId));
             if (species == null) {
                 String message = "Species not found with ID: " + speciesId;
@@ -156,12 +565,30 @@ public class CharacterController {
                 return ResponseEntity.badRequest().body(message);
             }
 
+            Background background = backgroundRepository.findByIdWithFeatures(UUID.fromString(backgroundId));
+            if (background == null) {
+                String message = "Background not found with ID: " + backgroundId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
+            CharacterClass characterClass = characterClassRepository.findByIdWithFeatures(UUID.fromString(classId));
+            if (characterClass == null) {
+                String message = "Class not found with ID: " + classId;
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+
             character.setName(name);
             character.setSpecies(species);
+            character.setBackground(background);
+            character.setCharacterClass(characterClass);
 
-            return ResponseEntity.ok(characterRepository.save(character));
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
         } catch (IllegalArgumentException e) {
-            String message = "Invalid species ID format";
+            String message = "Invalid UUID format";
             logger.error(message, e);
             return ResponseEntity.badRequest().body(message);
         } catch (Exception e) {
