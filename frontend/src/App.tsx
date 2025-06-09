@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaTrash, FaEdit, FaPlus, FaExclamationTriangle, FaArrowLeft } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaPlus, FaArrowLeft } from 'react-icons/fa';
 import CharacterCreate from './components/CharacterCreate';
+import CharacterDelete from './components/CharacterDelete';
 import { Character, Species, Background, CharacterClass } from './types/character';
 
 function App() {
@@ -102,6 +103,13 @@ function App() {
   const handleCharacterCreated = (character: Character) => {
     setCharacters([...characters, character]);
     setShowCreateModal(false);
+  };
+
+  const handleCharacterDeleted = (characterId: number) => {
+    setCharacters(characters.filter(char => char.id !== characterId));
+    if (selectedCharacter?.id === characterId) {
+      setSelectedCharacter(null);
+    }
   };
 
   const handleLevelChange = async (newLevel: number) => {
@@ -266,21 +274,6 @@ function App() {
     setShowDeleteModal(true);
   };
 
-  const confirmDelete = async () => {
-    if (!characterToDelete) return;
-    try {
-      await axios.delete(`${apiUrl}/api/characters/${characterToDelete.id}`);
-      setCharacters(characters.filter(char => char.id !== characterToDelete.id));
-      if (selectedCharacter?.id === characterToDelete.id) {
-        setSelectedCharacter(null);
-      }
-      setShowDeleteModal(false);
-      setCharacterToDelete(null);
-    } catch (error) {
-      console.error('Error deleting character:', error);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-100">
       {error && (
@@ -370,12 +363,6 @@ function App() {
                     <FaEdit className="text-2xl" />
                   </button>
                 )}
-                <button
-                  onClick={(e) => handleDeleteClick(e, selectedCharacter)}
-                  className="p-2 text-red-500 hover:text-red-700"
-                >
-                  <FaTrash className="text-2xl" />
-                </button>
               </div>
             </div>
             <div className="space-y-6">
@@ -696,6 +683,19 @@ function App() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Delete Button - Moved to bottom */}
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    <div className="flex justify-center">
+                      <button
+                        onClick={(e) => handleDeleteClick(e, selectedCharacter)}
+                        className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center space-x-2"
+                      >
+                        <FaTrash className="text-lg" />
+                        <span>Delete Character</span>
+                      </button>
+                    </div>
+                  </div>
                 </>
               )}
             </div>
@@ -703,38 +703,17 @@ function App() {
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && characterToDelete && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex items-center mb-4 text-red-500">
-              <FaExclamationTriangle className="text-2xl mr-2" />
-              <h2 className="text-2xl font-bold">Confirm Delete</h2>
-            </div>
-            <p className="mb-6 text-gray-600">
-              Are you sure you want to delete <span className="font-semibold">{characterToDelete.name}</span>? 
-              This action cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setCharacterToDelete(null);
-                }}
-                className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Delete Confirmation Modal - Using the new component */}
+      <CharacterDelete
+        character={characterToDelete}
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setCharacterToDelete(null);
+        }}
+        onCharacterDeleted={handleCharacterDeleted}
+        apiUrl={apiUrl}
+      />
     </div>
   );
 }
