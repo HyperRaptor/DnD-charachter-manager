@@ -92,6 +92,9 @@ public class Character {
     @Column(columnDefinition = "TEXT")
     private String spells = "[]";
 
+    @Column(columnDefinition = "TEXT")
+    private String weapons = "[]";
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Add methods to calculate ability score modifiers

@@ -861,6 +861,41 @@ public class CharacterController {
         }
     }
 
+    @PutMapping("/characters/{id}/weapons")
+    public ResponseEntity<?> updateCharacterWeapons(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String weapons = request.get("weapons");
+
+            if (weapons != null) {
+                try {
+                    logger.info("Received weapons data: {}", weapons);
+                    
+                    // Validate that weapons is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(weapons); // This will throw an exception if invalid JSON
+                    
+                    character.setWeapons(weapons);
+                    logger.info("Successfully updated character weapons");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid weapons JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character weapons: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character weapons", e);
+            return ResponseEntity.internalServerError().body("Error updating character weapons: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/characters/{id}")
     public ResponseEntity<?> deleteCharacter(@PathVariable Long id) {
         try {

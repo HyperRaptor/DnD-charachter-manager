@@ -73,5 +73,6 @@ export interface Character {
   classActions: string;
   spellSlots?: string;
   spells?: string;
+  weapons?: string;
   createdAt: string;
 } 
