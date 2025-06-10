@@ -791,6 +791,41 @@ public class CharacterController {
         }
     }
 
+    @PutMapping("/characters/{id}/spell-slots")
+    public ResponseEntity<?> updateCharacterSpellSlots(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String spellSlots = request.get("spellSlots");
+
+            if (spellSlots != null) {
+                try {
+                    logger.info("Received spell slots data: {}", spellSlots);
+                    
+                    // Validate that spellSlots is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(spellSlots); // This will throw an exception if invalid JSON
+                    
+                    character.setSpellSlots(spellSlots);
+                    logger.info("Successfully updated character spell slots");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid spell slots JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character spell slots: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character spell slots", e);
+            return ResponseEntity.internalServerError().body("Error updating character spell slots: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/characters/{id}")
     public ResponseEntity<?> deleteCharacter(@PathVariable Long id) {
         try {

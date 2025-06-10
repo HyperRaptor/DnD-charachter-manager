@@ -7,6 +7,7 @@ import InventoryTab from './InventoryTab';
 import DetailsTab from './DetailsTab';
 import WeaponsClassActionsTab from './WeaponsClassActionsTab';
 import SkillsTab from './SkillsTab';
+import SpellsTab from './SpellsTab';
 
 interface CharacterDetailsProps {
   character: Character;
@@ -35,7 +36,7 @@ interface CharacterDetailsProps {
   onCharacterUpdated: (character: Character) => void;
 }
 
-type TabType = 'core' | 'reference' | 'inventory' | 'details' | 'WeaponsClassActions' | 'skills';
+type TabType = 'core' | 'reference' | 'inventory' | 'details' | 'WeaponsClassActions' | 'skills' | 'spells';
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   character,
@@ -235,6 +236,16 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 >
                   Skills
                 </button>
+                <button
+                  onClick={() => setActiveTab('spells')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'spells'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Spells
+                </button>
               </nav>
             </div>
 
@@ -276,6 +287,13 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
               <SkillsTab 
                 character={character} 
                 onSkillChange={onSkillChange}
+              />
+            )}
+            {activeTab === 'spells' && (
+              <SpellsTab 
+                character={character} 
+                apiUrl={apiUrl}
+                onCharacterUpdated={onCharacterUpdated}
               />
             )}
 

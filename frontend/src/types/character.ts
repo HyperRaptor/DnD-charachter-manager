@@ -71,5 +71,6 @@ export interface Character {
   details: string;
   skills: Skill[] | string;
   classActions: string;
+  spellSlots?: string;
   createdAt: string;
 } 
