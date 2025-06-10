@@ -36,6 +36,13 @@ export interface CharacterClass {
   features: ClassFeature[];
 }
 
+export interface Skill {
+  name: string;
+  ability: string;
+  proficiency: 'none' | 'proficient' | 'expertise' | 'jack-of-all-trades';
+  other: number;
+}
+
 export interface Character {
   id: number;
   name: string;
@@ -59,5 +66,13 @@ export interface Character {
   intelligenceModifier: number;
   wisdomModifier: number;
   charismaModifier: number;
+  coins: string;
+  items: string;
+  details: string;
+  skills: Skill[] | string;
+  classActions: string;
+  spellSlots?: string;
+  spells?: string;
+  weapons?: string;
   createdAt: string;
 } 

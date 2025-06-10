@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api")
@@ -90,6 +91,60 @@ public class CharacterController {
                 logger.info("Class initialization complete");
             } else {
                 logger.info("Classes already exist, skipping initialization");
+            }
+
+            // Create debug character if no characters exist
+            if (characterRepository.count() == 0) {
+                logger.info("Creating debug character...");
+                try {
+                    // Get the first available species, background, and class
+                    List<Species> speciesList = speciesRepository.findAll();
+                    List<Background> backgroundList = backgroundRepository.findAll();
+                    List<CharacterClass> classList = characterClassRepository.findAll();
+                    
+                    if (!speciesList.isEmpty() && !backgroundList.isEmpty() && !classList.isEmpty()) {
+                        Species debugSpecies = speciesList.get(0);
+                        Background debugBackground = backgroundList.get(0);
+                        CharacterClass debugClass = classList.get(0);
+                        
+                        Character debugCharacter = new Character();
+                        debugCharacter.setName("Tom(Debug Character)");
+                        debugCharacter.setSpecies(debugSpecies);
+                        debugCharacter.setBackground(debugBackground);
+                        debugCharacter.setCharacterClass(debugClass);
+                        debugCharacter.setLevel(3);
+                        debugCharacter.setTemporaryHp(0);
+                        debugCharacter.setCurrentHp(25);
+                        debugCharacter.setMaxHp(25);
+                        debugCharacter.setSpeed(30);
+                        debugCharacter.setStrength(16);
+                        debugCharacter.setDexterity(14);
+                        debugCharacter.setConstitution(15);
+                        debugCharacter.setIntelligence(12);
+                        debugCharacter.setWisdom(13);
+                        debugCharacter.setCharisma(10);
+                        
+                        // Set some debug skills
+                        String debugSkills = "[{\"name\":\"Athletics\",\"ability\":\"Strength\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Perception\",\"ability\":\"Wisdom\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Stealth\",\"ability\":\"Dexterity\",\"proficiency\":\"none\",\"other\":0}]";
+                        debugCharacter.setSkills(debugSkills);
+                        
+                        // Set some debug inventory
+                        String debugCoins = "{\"platinum\":0,\"gold\":150,\"electrum\":0,\"silver\":25,\"copper\":0}";
+                        debugCharacter.setCoins(debugCoins);
+                        
+                        String debugItems = "[{\"id\":\"1\",\"name\":\"Longsword\",\"description\":\"A well-crafted longsword\",\"quantity\":1,\"weight\":3.0},{\"id\":\"2\",\"name\":\"Healing Potion\",\"description\":\"Restores 2d4+2 hit points\",\"quantity\":3,\"weight\":0.5}]";
+                        debugCharacter.setItems(debugItems);
+                        
+                        Character savedDebugCharacter = characterRepository.save(debugCharacter);
+                        logger.info("Created debug character with ID: {}", savedDebugCharacter.getId());
+                    } else {
+                        logger.warn("Cannot create debug character: missing species, background, or class data");
+                    }
+                } catch (Exception e) {
+                    logger.error("Error creating debug character: {}", e.getMessage());
+                }
+            } else {
+                logger.info("Characters already exist, skipping debug character creation");
             }
         } catch (Exception e) {
             logger.error("Error initializing data", e);
@@ -349,6 +404,9 @@ public class CharacterController {
             String intelligenceStr = request.get("intelligence");
             String wisdomStr = request.get("wisdom");
             String charismaStr = request.get("charisma");
+            String coins = request.get("coins");
+            String items = request.get("items");
+            String details = request.get("details");
 
             if (name == null || name.trim().isEmpty()) {
                 String message = "Character name cannot be empty";
@@ -372,6 +430,23 @@ public class CharacterController {
                 String message = "Class ID cannot be null";
                 logger.error(message);
                 return ResponseEntity.badRequest().body(message);
+            }
+
+            // Handle inventory updates
+            if (coins != null) {
+                character.setCoins(coins);
+                logger.info("Updating character coins to: {}", coins);
+            }
+
+            if (items != null) {
+                character.setItems(items);
+                logger.info("Updating character items to: {}", items);
+            }
+
+            // Handle details updates
+            if (details != null) {
+                character.setDetails(details);
+                logger.info("Updating character details to: {}", details);
             }
 
             // Handle level update
@@ -597,6 +672,230 @@ public class CharacterController {
         }
     }
 
+    @PutMapping("/characters/{id}/inventory")
+    public ResponseEntity<?> updateCharacterInventory(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String coins = request.get("coins");
+            String items = request.get("items");
+
+            if (coins != null) {
+                character.setCoins(coins);
+                logger.info("Updating character coins to: {}", coins);
+            }
+
+            if (items != null) {
+                character.setItems(items);
+                logger.info("Updating character items to: {}", items);
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character inventory: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character inventory", e);
+            return ResponseEntity.internalServerError().body("Error updating character inventory: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/details")
+    public ResponseEntity<?> updateCharacterDetails(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String details = request.get("details");
+
+            if (details != null) {
+                character.setDetails(details);
+                logger.info("Updating character details to: {}", details);
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character details: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character details", e);
+            return ResponseEntity.internalServerError().body("Error updating character details: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/skills")
+    public ResponseEntity<?> updateCharacterSkills(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String skills = request.get("skills");
+
+            if (skills != null) {
+                try {
+                    logger.info("Received skills data: {}", skills);
+                    
+                    // Validate that skills is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(skills); // This will throw an exception if invalid JSON
+                    
+                    character.setSkills(skills);
+                    logger.info("Successfully updated character skills");
+                } catch (Exception e) {
+                    String message = "Invalid skills JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character skills: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character skills", e);
+            return ResponseEntity.internalServerError().body("Error updating character skills: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/class-actions")
+    public ResponseEntity<?> updateCharacterClassActions(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String classActions = request.get("classActions");
+
+            if (classActions != null) {
+                try {
+                    logger.info("Received class actions data: {}", classActions);
+                    
+                    // Validate that classActions is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(classActions); // This will throw an exception if invalid JSON
+                    
+                    character.setClassActions(classActions);
+                    logger.info("Successfully updated character class actions");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid class actions JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character class actions: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character class actions", e);
+            return ResponseEntity.internalServerError().body("Error updating character class actions: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/spell-slots")
+    public ResponseEntity<?> updateCharacterSpellSlots(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String spellSlots = request.get("spellSlots");
+
+            if (spellSlots != null) {
+                try {
+                    logger.info("Received spell slots data: {}", spellSlots);
+                    
+                    // Validate that spellSlots is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(spellSlots); // This will throw an exception if invalid JSON
+                    
+                    character.setSpellSlots(spellSlots);
+                    logger.info("Successfully updated character spell slots");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid spell slots JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character spell slots: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character spell slots", e);
+            return ResponseEntity.internalServerError().body("Error updating character spell slots: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/spells")
+    public ResponseEntity<?> updateCharacterSpells(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String spells = request.get("spells");
+
+            if (spells != null) {
+                try {
+                    logger.info("Received spells data: {}", spells);
+                    
+                    // Validate that spells is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(spells); // This will throw an exception if invalid JSON
+                    
+                    character.setSpells(spells);
+                    logger.info("Successfully updated character spells");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid spells JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character spells: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character spells", e);
+            return ResponseEntity.internalServerError().body("Error updating character spells: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/weapons")
+    public ResponseEntity<?> updateCharacterWeapons(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String weapons = request.get("weapons");
+
+            if (weapons != null) {
+                try {
+                    logger.info("Received weapons data: {}", weapons);
+                    
+                    // Validate that weapons is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(weapons); // This will throw an exception if invalid JSON
+                    
+                    character.setWeapons(weapons);
+                    logger.info("Successfully updated character weapons");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid weapons JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character weapons: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character weapons", e);
+            return ResponseEntity.internalServerError().body("Error updating character weapons: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/characters/{id}")
     public ResponseEntity<?> deleteCharacter(@PathVariable Long id) {
         try {
@@ -608,6 +907,64 @@ public class CharacterController {
         } catch (Exception e) {
             logger.error("Error deleting character", e);
             return ResponseEntity.internalServerError().body("Error deleting character: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/debug/character")
+    public ResponseEntity<?> createDebugCharacter() {
+        try {
+            logger.info("Creating debug character on demand...");
+            
+            // Get the first available species, background, and class
+            List<Species> speciesList = speciesRepository.findAll();
+            List<Background> backgroundList = backgroundRepository.findAll();
+            List<CharacterClass> classList = characterClassRepository.findAll();
+            
+            if (speciesList.isEmpty() || backgroundList.isEmpty() || classList.isEmpty()) {
+                String message = "Cannot create debug character: missing species, background, or class data";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+            
+            Species debugSpecies = speciesList.get(0);
+            Background debugBackground = backgroundList.get(0);
+            CharacterClass debugClass = classList.get(0);
+            
+            Character debugCharacter = new Character();
+            debugCharacter.setName("Debug Character " + System.currentTimeMillis());
+            debugCharacter.setSpecies(debugSpecies);
+            debugCharacter.setBackground(debugBackground);
+            debugCharacter.setCharacterClass(debugClass);
+            debugCharacter.setLevel(3);
+            debugCharacter.setTemporaryHp(0);
+            debugCharacter.setCurrentHp(25);
+            debugCharacter.setMaxHp(25);
+            debugCharacter.setSpeed(30);
+            debugCharacter.setStrength(16);
+            debugCharacter.setDexterity(14);
+            debugCharacter.setConstitution(15);
+            debugCharacter.setIntelligence(12);
+            debugCharacter.setWisdom(13);
+            debugCharacter.setCharisma(10);
+            
+            // Set some debug skills
+            String debugSkills = "[{\"name\":\"Athletics\",\"ability\":\"Strength\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Perception\",\"ability\":\"Wisdom\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Stealth\",\"ability\":\"Dexterity\",\"proficiency\":\"none\",\"other\":0}]";
+            debugCharacter.setSkills(debugSkills);
+            
+            // Set some debug inventory
+            String debugCoins = "{\"platinum\":0,\"gold\":150,\"electrum\":0,\"silver\":25,\"copper\":0}";
+            debugCharacter.setCoins(debugCoins);
+            
+            String debugItems = "[{\"id\":\"1\",\"name\":\"Longsword\",\"description\":\"A well-crafted longsword\",\"quantity\":1,\"weight\":3.0},{\"id\":\"2\",\"name\":\"Healing Potion\",\"description\":\"Restores 2d4+2 hit points\",\"quantity\":3,\"weight\":0.5}]";
+            debugCharacter.setItems(debugItems);
+            
+            Character savedDebugCharacter = characterRepository.save(debugCharacter);
+            logger.info("Created debug character with ID: {}", savedDebugCharacter.getId());
+            
+            return ResponseEntity.ok(savedDebugCharacter);
+        } catch (Exception e) {
+            logger.error("Error creating debug character", e);
+            return ResponseEntity.internalServerError().body("Error creating debug character: " + e.getMessage());
         }
     }
 } 
