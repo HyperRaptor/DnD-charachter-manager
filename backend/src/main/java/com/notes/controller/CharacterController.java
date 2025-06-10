@@ -92,6 +92,60 @@ public class CharacterController {
             } else {
                 logger.info("Classes already exist, skipping initialization");
             }
+
+            // Create debug character if no characters exist
+            if (characterRepository.count() == 0) {
+                logger.info("Creating debug character...");
+                try {
+                    // Get the first available species, background, and class
+                    List<Species> speciesList = speciesRepository.findAll();
+                    List<Background> backgroundList = backgroundRepository.findAll();
+                    List<CharacterClass> classList = characterClassRepository.findAll();
+                    
+                    if (!speciesList.isEmpty() && !backgroundList.isEmpty() && !classList.isEmpty()) {
+                        Species debugSpecies = speciesList.get(0);
+                        Background debugBackground = backgroundList.get(0);
+                        CharacterClass debugClass = classList.get(0);
+                        
+                        Character debugCharacter = new Character();
+                        debugCharacter.setName("Tom(Debug Character)");
+                        debugCharacter.setSpecies(debugSpecies);
+                        debugCharacter.setBackground(debugBackground);
+                        debugCharacter.setCharacterClass(debugClass);
+                        debugCharacter.setLevel(3);
+                        debugCharacter.setTemporaryHp(0);
+                        debugCharacter.setCurrentHp(25);
+                        debugCharacter.setMaxHp(25);
+                        debugCharacter.setSpeed(30);
+                        debugCharacter.setStrength(16);
+                        debugCharacter.setDexterity(14);
+                        debugCharacter.setConstitution(15);
+                        debugCharacter.setIntelligence(12);
+                        debugCharacter.setWisdom(13);
+                        debugCharacter.setCharisma(10);
+                        
+                        // Set some debug skills
+                        String debugSkills = "[{\"name\":\"Athletics\",\"ability\":\"Strength\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Perception\",\"ability\":\"Wisdom\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Stealth\",\"ability\":\"Dexterity\",\"proficiency\":\"none\",\"other\":0}]";
+                        debugCharacter.setSkills(debugSkills);
+                        
+                        // Set some debug inventory
+                        String debugCoins = "{\"platinum\":0,\"gold\":150,\"electrum\":0,\"silver\":25,\"copper\":0}";
+                        debugCharacter.setCoins(debugCoins);
+                        
+                        String debugItems = "[{\"id\":\"1\",\"name\":\"Longsword\",\"description\":\"A well-crafted longsword\",\"quantity\":1,\"weight\":3.0},{\"id\":\"2\",\"name\":\"Healing Potion\",\"description\":\"Restores 2d4+2 hit points\",\"quantity\":3,\"weight\":0.5}]";
+                        debugCharacter.setItems(debugItems);
+                        
+                        Character savedDebugCharacter = characterRepository.save(debugCharacter);
+                        logger.info("Created debug character with ID: {}", savedDebugCharacter.getId());
+                    } else {
+                        logger.warn("Cannot create debug character: missing species, background, or class data");
+                    }
+                } catch (Exception e) {
+                    logger.error("Error creating debug character: {}", e.getMessage());
+                }
+            } else {
+                logger.info("Characters already exist, skipping debug character creation");
+            }
         } catch (Exception e) {
             logger.error("Error initializing data", e);
         }
@@ -702,6 +756,41 @@ public class CharacterController {
         }
     }
 
+    @PutMapping("/characters/{id}/class-actions")
+    public ResponseEntity<?> updateCharacterClassActions(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String classActions = request.get("classActions");
+
+            if (classActions != null) {
+                try {
+                    logger.info("Received class actions data: {}", classActions);
+                    
+                    // Validate that classActions is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(classActions); // This will throw an exception if invalid JSON
+                    
+                    character.setClassActions(classActions);
+                    logger.info("Successfully updated character class actions");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid class actions JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character class actions: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character class actions", e);
+            return ResponseEntity.internalServerError().body("Error updating character class actions: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/characters/{id}")
     public ResponseEntity<?> deleteCharacter(@PathVariable Long id) {
         try {
@@ -713,6 +802,64 @@ public class CharacterController {
         } catch (Exception e) {
             logger.error("Error deleting character", e);
             return ResponseEntity.internalServerError().body("Error deleting character: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/debug/character")
+    public ResponseEntity<?> createDebugCharacter() {
+        try {
+            logger.info("Creating debug character on demand...");
+            
+            // Get the first available species, background, and class
+            List<Species> speciesList = speciesRepository.findAll();
+            List<Background> backgroundList = backgroundRepository.findAll();
+            List<CharacterClass> classList = characterClassRepository.findAll();
+            
+            if (speciesList.isEmpty() || backgroundList.isEmpty() || classList.isEmpty()) {
+                String message = "Cannot create debug character: missing species, background, or class data";
+                logger.error(message);
+                return ResponseEntity.badRequest().body(message);
+            }
+            
+            Species debugSpecies = speciesList.get(0);
+            Background debugBackground = backgroundList.get(0);
+            CharacterClass debugClass = classList.get(0);
+            
+            Character debugCharacter = new Character();
+            debugCharacter.setName("Debug Character " + System.currentTimeMillis());
+            debugCharacter.setSpecies(debugSpecies);
+            debugCharacter.setBackground(debugBackground);
+            debugCharacter.setCharacterClass(debugClass);
+            debugCharacter.setLevel(3);
+            debugCharacter.setTemporaryHp(0);
+            debugCharacter.setCurrentHp(25);
+            debugCharacter.setMaxHp(25);
+            debugCharacter.setSpeed(30);
+            debugCharacter.setStrength(16);
+            debugCharacter.setDexterity(14);
+            debugCharacter.setConstitution(15);
+            debugCharacter.setIntelligence(12);
+            debugCharacter.setWisdom(13);
+            debugCharacter.setCharisma(10);
+            
+            // Set some debug skills
+            String debugSkills = "[{\"name\":\"Athletics\",\"ability\":\"Strength\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Perception\",\"ability\":\"Wisdom\",\"proficiency\":\"proficient\",\"other\":0},{\"name\":\"Stealth\",\"ability\":\"Dexterity\",\"proficiency\":\"none\",\"other\":0}]";
+            debugCharacter.setSkills(debugSkills);
+            
+            // Set some debug inventory
+            String debugCoins = "{\"platinum\":0,\"gold\":150,\"electrum\":0,\"silver\":25,\"copper\":0}";
+            debugCharacter.setCoins(debugCoins);
+            
+            String debugItems = "[{\"id\":\"1\",\"name\":\"Longsword\",\"description\":\"A well-crafted longsword\",\"quantity\":1,\"weight\":3.0},{\"id\":\"2\",\"name\":\"Healing Potion\",\"description\":\"Restores 2d4+2 hit points\",\"quantity\":3,\"weight\":0.5}]";
+            debugCharacter.setItems(debugItems);
+            
+            Character savedDebugCharacter = characterRepository.save(debugCharacter);
+            logger.info("Created debug character with ID: {}", savedDebugCharacter.getId());
+            
+            return ResponseEntity.ok(savedDebugCharacter);
+        } catch (Exception e) {
+            logger.error("Error creating debug character", e);
+            return ResponseEntity.internalServerError().body("Error creating debug character: " + e.getMessage());
         }
     }
 } 

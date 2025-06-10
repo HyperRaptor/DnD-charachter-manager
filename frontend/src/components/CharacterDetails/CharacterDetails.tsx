@@ -5,7 +5,7 @@ import CoreTab from './CoreTab';
 import ReferenceTab from './ReferenceTab';
 import InventoryTab from './InventoryTab';
 import DetailsTab from './DetailsTab';
-import SpellsWeaponsTab from './SpellsWeaponsTab';
+import WeaponsClassActionsTab from './WeaponsClassActionsTab';
 import SkillsTab from './SkillsTab';
 
 interface CharacterDetailsProps {
@@ -35,7 +35,7 @@ interface CharacterDetailsProps {
   onCharacterUpdated: (character: Character) => void;
 }
 
-type TabType = 'core' | 'reference' | 'inventory' | 'details' | 'spellsWeapons' | 'skills';
+type TabType = 'core' | 'reference' | 'inventory' | 'details' | 'WeaponsClassActions' | 'skills';
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   character,
@@ -216,14 +216,14 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   Details
                 </button>
                 <button
-                  onClick={() => setActiveTab('spellsWeapons')}
+                  onClick={() => setActiveTab('WeaponsClassActions')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === 'spellsWeapons'
+                    activeTab === 'WeaponsClassActions'
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
                 >
-                  Spells/Weapons
+                  Weapons/Class Actions
                 </button>
                 <button
                   onClick={() => setActiveTab('skills')}
@@ -265,8 +265,12 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 onCharacterUpdated={onCharacterUpdated}
               />
             )}
-            {activeTab === 'spellsWeapons' && (
-              <SpellsWeaponsTab character={character} />
+            {activeTab === 'WeaponsClassActions' && (
+              <WeaponsClassActionsTab 
+                character={character} 
+                apiUrl={apiUrl}
+                onCharacterUpdated={onCharacterUpdated}
+              />
             )}
             {activeTab === 'skills' && (
               <SkillsTab 

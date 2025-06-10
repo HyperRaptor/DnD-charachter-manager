@@ -70,5 +70,6 @@ export interface Character {
   items: string;
   details: string;
   skills: Skill[] | string;
+  classActions: string;
   createdAt: string;
 } 

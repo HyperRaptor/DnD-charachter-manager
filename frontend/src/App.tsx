@@ -394,6 +394,22 @@ function App() {
     setShowCreateModal(true);
   };
 
+  const handleCreateDebug = async () => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/debug/character`);
+      const newCharacter = response.data;
+      setCharacters([...characters, newCharacter]);
+      alert(`Debug character "${newCharacter.name}" created successfully!`);
+    } catch (error) {
+      console.error('Error creating debug character:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        alert(`Error creating debug character: ${error.response.data}`);
+      } else {
+        alert('Error creating debug character. Please try again.');
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {error && (
@@ -410,6 +426,7 @@ function App() {
           onCharacterSelect={handleCharacterSelect}
           onCharacterDelete={handleDeleteClick}
           onCreateNew={handleCreateNew}
+          onCreateDebug={handleCreateDebug}
         />
       )}
 

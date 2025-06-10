@@ -83,6 +83,9 @@ public class Character {
     @Column(columnDefinition = "TEXT")
     private String skills = "[]";
 
+    @Column(columnDefinition = "TEXT")
+    private String classActions = "[]";
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
     // Add methods to calculate ability score modifiers
