@@ -5,6 +5,8 @@ import CoreTab from './CoreTab';
 import ReferenceTab from './ReferenceTab';
 import InventoryTab from './InventoryTab';
 import DetailsTab from './DetailsTab';
+import SpellsWeaponsTab from './SpellsWeaponsTab';
+import SkillsTab from './SkillsTab';
 
 interface CharacterDetailsProps {
   character: Character;
@@ -14,6 +16,7 @@ interface CharacterDetailsProps {
   onHpChange: (field: 'temporaryHp' | 'currentHp' | 'maxHp', value: number) => void;
   onSpeedChange: (value: number) => void;
   onAbilityScoreChange: (ability: string, value: number) => void;
+  onSkillChange?: (skillName: string, field: 'proficiency' | 'other', value: string | number) => void;
   speciesList: Species[];
   backgroundList: Background[];
   classList: CharacterClass[];
@@ -32,7 +35,7 @@ interface CharacterDetailsProps {
   onCharacterUpdated: (character: Character) => void;
 }
 
-type TabType = 'core' | 'reference' | 'inventory' | 'details';
+type TabType = 'core' | 'reference' | 'inventory' | 'details' | 'spellsWeapons' | 'skills';
 
 const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   character,
@@ -42,6 +45,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   onHpChange,
   onSpeedChange,
   onAbilityScoreChange,
+  onSkillChange,
   speciesList,
   backgroundList,
   classList,
@@ -211,6 +215,26 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 >
                   Details
                 </button>
+                <button
+                  onClick={() => setActiveTab('spellsWeapons')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'spellsWeapons'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Spells/Weapons
+                </button>
+                <button
+                  onClick={() => setActiveTab('skills')}
+                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                    activeTab === 'skills'
+                      ? 'border-blue-500 text-blue-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  Skills
+                </button>
               </nav>
             </div>
 
@@ -239,6 +263,15 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                 character={character} 
                 apiUrl={apiUrl}
                 onCharacterUpdated={onCharacterUpdated}
+              />
+            )}
+            {activeTab === 'spellsWeapons' && (
+              <SpellsWeaponsTab character={character} />
+            )}
+            {activeTab === 'skills' && (
+              <SkillsTab 
+                character={character} 
+                onSkillChange={onSkillChange}
               />
             )}
 

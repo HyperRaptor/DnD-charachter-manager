@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import java.util.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping("/api")
@@ -664,6 +665,40 @@ public class CharacterController {
         } catch (Exception e) {
             logger.error("Error updating character details", e);
             return ResponseEntity.internalServerError().body("Error updating character details: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/characters/{id}/skills")
+    public ResponseEntity<?> updateCharacterSkills(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String skills = request.get("skills");
+
+            if (skills != null) {
+                try {
+                    logger.info("Received skills data: {}", skills);
+                    
+                    // Validate that skills is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(skills); // This will throw an exception if invalid JSON
+                    
+                    character.setSkills(skills);
+                    logger.info("Successfully updated character skills");
+                } catch (Exception e) {
+                    String message = "Invalid skills JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character skills: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character skills", e);
+            return ResponseEntity.internalServerError().body("Error updating character skills: " + e.getMessage());
         }
     }
 

@@ -4,7 +4,7 @@ import CharacterCreate from './components/CharacterCreate';
 import CharacterDelete from './components/CharacterDelete';
 import CharacterDetails from './components/CharacterDetails';
 import CharacterList from './components/CharacterList';
-import { Character, Species, Background, CharacterClass } from './types/character';
+import { Character, Species, Background, CharacterClass, Skill } from './types/character';
 
 function App() {
   const [characters, setCharacters] = useState<Character[]>([]);
@@ -276,6 +276,72 @@ function App() {
     }
   };
 
+  const handleSkillChange = async (skillName: string, field: 'proficiency' | 'other', value: string | number) => {
+    if (!selectedCharacter) return;
+
+    try {
+      // Get current skills or initialize empty array
+      let currentSkills: Skill[] = [];
+      if (selectedCharacter.skills) {
+        try {
+          currentSkills = typeof selectedCharacter.skills === 'string' 
+            ? JSON.parse(selectedCharacter.skills) 
+            : selectedCharacter.skills;
+        } catch (e) {
+          console.error('Error parsing skills:', e);
+          currentSkills = [];
+        }
+      }
+      
+      // Find existing skill or create new one
+      let updatedSkills = [...currentSkills];
+      const existingSkillIndex = updatedSkills.findIndex(s => s.name === skillName);
+      
+      if (existingSkillIndex >= 0) {
+        // Update existing skill
+        updatedSkills[existingSkillIndex] = {
+          ...updatedSkills[existingSkillIndex],
+          [field]: value
+        };
+      } else {
+        // Create new skill
+        const skillGroups = [
+          { ability: 'Strength', skills: ['Athletics'] },
+          { ability: 'Dexterity', skills: ['Acrobatics', 'Sleight of Hand', 'Stealth'] },
+          { ability: 'Intelligence', skills: ['Arcana', 'History', 'Investigation', 'Nature', 'Religion'] },
+          { ability: 'Wisdom', skills: ['Animal Handling', 'Insight', 'Medicine', 'Perception', 'Survival'] },
+          { ability: 'Charisma', skills: ['Deception', 'Intimidation', 'Performance', 'Persuasion'] }
+        ];
+        
+        const group = skillGroups.find(g => g.skills.includes(skillName));
+        const newSkill: Skill = {
+          name: skillName,
+          ability: group?.ability || '',
+          proficiency: field === 'proficiency' ? (value as 'none' | 'proficient' | 'expertise' | 'jack-of-all-trades') : 'none',
+          other: field === 'other' ? value as number : 0
+        };
+        updatedSkills.push(newSkill);
+      }
+
+      const characterData = {
+        skills: JSON.stringify(updatedSkills)
+      };
+      
+      const response = await axios.put(`${apiUrl}/api/characters/${selectedCharacter.id}/skills`, characterData);
+      setCharacters(characters.map(char => 
+        char.id === selectedCharacter.id ? response.data : char
+      ));
+      setSelectedCharacter(response.data);
+    } catch (error) {
+      console.error('Error updating skill:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        alert(`Error updating skill: ${error.response.data}`);
+      } else {
+        alert('Error updating skill. Please try again.');
+      }
+    }
+  };
+
   const handleDeleteClick = (e: React.MouseEvent, character: Character) => {
     e.stopPropagation();
     setCharacterToDelete(character);
@@ -369,6 +435,7 @@ function App() {
           onHpChange={handleHpChange}
           onSpeedChange={handleSpeedChange}
           onAbilityScoreChange={handleAbilityScoreChange}
+          onSkillChange={handleSkillChange}
           speciesList={speciesList}
           backgroundList={backgroundList}
           classList={classList}
