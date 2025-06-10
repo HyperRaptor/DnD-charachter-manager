@@ -61,14 +61,45 @@ const SpellsTab: React.FC<SpellsTabProps> = ({ character, apiUrl, onCharacterUpd
     }));
   };
 
+  // Initialize spells from character data or create defaults
+  const getSpells = (): Spell[] => {
+    if (character.spells && character.spells !== 'null' && character.spells !== 'undefined' && character.spells !== '') {
+      try {
+        const spells = typeof character.spells === 'string' 
+          ? JSON.parse(character.spells) 
+          : character.spells;
+        
+        if (Array.isArray(spells)) {
+          return spells;
+        }
+      } catch (e) {
+        console.error('Error parsing spells:', e);
+      }
+    }
+    
+    return [];
+  };
+
   const [spellSlots, setSpellSlots] = useState<SpellSlot[]>(getSpellSlots());
   const [isSaving, setIsSaving] = useState(false);
-  const [spells, setSpells] = useState<Spell[]>([]);
+  const [spells, setSpells] = useState<Spell[]>(getSpells());
 
   // Sync state when character data changes
   useEffect(() => {
     setSpellSlots(getSpellSlots());
-  }, [character.spellSlots]);
+    setSpells(getSpells());
+  }, [character.spellSlots, character.spells]);
+
+  const saveSpells = async (updatedSpells: Spell[]) => {
+    try {
+      const response = await axios.put(`${apiUrl}/api/characters/${character.id}/spells`, {
+        spells: JSON.stringify(updatedSpells)
+      });
+      onCharacterUpdated(response.data);
+    } catch (error) {
+      console.error('Error saving spells:', error);
+    }
+  };
 
   const handleSpellSlotChange = async (level: number, field: 'used' | 'max', value: number) => {
     const newSpellSlots = spellSlots.map(slot => 
@@ -130,17 +161,27 @@ const SpellsTab: React.FC<SpellsTabProps> = ({ character, apiUrl, onCharacterUpd
       somatic: false,
       material: false
     };
-    setSpells([...spells, newSpell]);
+    const updatedSpells = [...spells, newSpell];
+    setSpells(updatedSpells);
+    saveSpells(updatedSpells);
   };
 
   const updateSpellField = (id: string, field: keyof Spell, value: string | boolean) => {
-    setSpells(spells.map(spell => 
+    const updatedSpells = spells.map(spell => 
       spell.id === id ? { ...spell, [field]: value } : spell
-    ));
+    );
+    setSpells(updatedSpells);
+    
+    // Auto-save after a short delay
+    setTimeout(() => {
+      saveSpells(updatedSpells);
+    }, 1000);
   };
 
   const removeSpell = (id: string) => {
-    setSpells(spells.filter(spell => spell.id !== id));
+    const updatedSpells = spells.filter(spell => spell.id !== id);
+    setSpells(updatedSpells);
+    saveSpells(updatedSpells);
   };
 
   return (

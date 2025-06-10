@@ -826,6 +826,41 @@ public class CharacterController {
         }
     }
 
+    @PutMapping("/characters/{id}/spells")
+    public ResponseEntity<?> updateCharacterSpells(@PathVariable Long id, @RequestBody Map<String, String> request) {
+        try {
+            Character character = characterRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Character not found"));
+
+            String spells = request.get("spells");
+
+            if (spells != null) {
+                try {
+                    logger.info("Received spells data: {}", spells);
+                    
+                    // Validate that spells is valid JSON
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.readTree(spells); // This will throw an exception if invalid JSON
+                    
+                    character.setSpells(spells);
+                    logger.info("Successfully updated character spells");
+                    
+                } catch (Exception e) {
+                    String message = "Invalid spells JSON format: " + e.getMessage();
+                    logger.error(message, e);
+                    return ResponseEntity.badRequest().body(message);
+                }
+            }
+
+            Character savedCharacter = characterRepository.save(character);
+            logger.info("Successfully updated character spells: {}", savedCharacter);
+            return ResponseEntity.ok(savedCharacter);
+        } catch (Exception e) {
+            logger.error("Error updating character spells", e);
+            return ResponseEntity.internalServerError().body("Error updating character spells: " + e.getMessage());
+        }
+    }
+
     @DeleteMapping("/characters/{id}")
     public ResponseEntity<?> deleteCharacter(@PathVariable Long id) {
         try {
