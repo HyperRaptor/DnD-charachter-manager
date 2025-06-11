@@ -19,9 +19,9 @@ const CharacterList: React.FC<CharacterListProps> = ({
 }) => {
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-slate-900 rounded-lg shadow p-6">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Characters</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Characters</h2>
           <div className="flex space-x-2">
             {onCreateDebug && (
               <button
@@ -41,28 +41,24 @@ const CharacterList: React.FC<CharacterListProps> = ({
             </button>
           </div>
         </div>
-        <div className="space-y-2">
+        <div className="space-y-4">
           {characters.map(character => (
             <div
               key={character.id}
-              className="p-3 rounded cursor-pointer hover:bg-gray-100 transition-colors duration-200"
+              className="p-8 border-2 border-gray-300 dark:border-slate-600 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-800 hover:border-gray-400 dark:hover:border-slate-500 transition-all duration-200 shadow-md bg-white dark:bg-slate-900"
               onClick={() => onCharacterSelect(character)}
             >
-              <div className="flex justify-between items-center">
-                <h3 className="font-medium truncate">{character.name}</h3>
-                <button
-                  onClick={(e) => onCharacterDelete(e, character)}
-                  className="text-red-500 hover:text-red-700 transition-colors duration-200"
-                >
-                  <FaTrash />
-                </button>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-lg truncate text-gray-800 dark:text-white">{character.name}</h3>
               </div>
-              <p className="text-sm text-gray-500">
-                {character.species.name} {character.characterClass.name} {character.level}
-              </p>
-              <p className="text-xs text-gray-400">
-                {character.background.name}
-              </p>
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  {character.species.name} {character.characterClass.name} {character.level}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {character.background.name}
+                </p>
+              </div>
             </div>
           ))}
         </div>

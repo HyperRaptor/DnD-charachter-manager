@@ -40,25 +40,25 @@ const CharacterDelete: React.FC<CharacterDeleteProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[60]">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <div className="flex items-center mb-4 text-red-500">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md">
+        <div className="flex items-center mb-4 text-red-500 dark:text-red-400">
           <FaExclamationTriangle className="text-2xl mr-2" />
-          <h2 className="text-2xl font-bold">Confirm Delete</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Confirm Delete</h2>
         </div>
-        <p className="mb-6 text-gray-600">
+        <p className="mb-6 text-gray-600 dark:text-gray-300">
           Are you sure you want to delete <span className="font-semibold">{character.name}</span>? 
           This action cannot be undone.
         </p>
         <div className="flex justify-end space-x-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
+            className="px-4 py-2 text-gray-600 dark:text-gray-300 bg-gray-200 dark:bg-gray-600 rounded hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors duration-200"
           >
             Cancel
           </button>
           <button
             onClick={confirmDelete}
-            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600"
+            className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors duration-200"
           >
             Delete
           </button>

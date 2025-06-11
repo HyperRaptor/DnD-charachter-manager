@@ -67,23 +67,23 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
   const [activeTab, setActiveTab] = useState<TabType>('core');
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto transition-colors duration-200">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center space-x-4">
             <button
               onClick={onBack}
-              className="p-2 text-gray-600 hover:text-gray-800"
+              className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
             >
               <FaArrowLeft className="text-2xl" />
             </button>
-            <h2 className="text-2xl font-bold text-gray-800">Character Details</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Character Details</h2>
           </div>
           <div className="flex items-center space-x-4">
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-2 text-blue-600 hover:text-blue-800"
+                className="p-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
               >
                 <FaEdit className="text-2xl" />
               </button>
@@ -91,7 +91,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
             {isEditing && (
               <button
                 onClick={onSave}
-                className="p-2 text-green-600 hover:text-green-800"
+                className="p-2 text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300"
               >
                 <FaSave className="text-2xl" />
               </button>
@@ -105,20 +105,20 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
               type="text"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
-              className="text-2xl font-bold w-full border-b-2 border-blue-500 focus:outline-none"
+              className="text-2xl font-bold w-full border-b-2 border-blue-500 focus:outline-none bg-transparent text-gray-800 dark:text-white"
               placeholder="Character Name"
             />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Species Selection */}
               <div>
-                <label className="font-medium">Species:</label>
+                <label className="font-medium text-gray-800 dark:text-white">Species:</label>
                 <select
                   value={editSpecies?.id || ''}
                   onChange={(e) => {
                     const selected = speciesList.find(s => s.id === e.target.value);
                     if (selected) setEditSpecies(selected);
                   }}
-                  className="w-full border rounded p-2 focus:outline-none focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                 >
                   {speciesList.map(species => (
                     <option key={species.id} value={species.id}>
@@ -130,14 +130,14 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
 
               {/* Background Selection */}
               <div>
-                <label className="font-medium">Background:</label>
+                <label className="font-medium text-gray-800 dark:text-white">Background:</label>
                 <select
                   value={editBackground?.id || ''}
                   onChange={(e) => {
                     const selected = backgroundList.find(b => b.id === e.target.value);
                     if (selected) setEditBackground(selected);
                   }}
-                  className="w-full border rounded p-2 focus:outline-none focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                 >
                   {backgroundList.map(background => (
                     <option key={background.id} value={background.id}>
@@ -149,14 +149,14 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
 
               {/* Class Selection */}
               <div>
-                <label className="font-medium">Class:</label>
+                <label className="font-medium text-gray-800 dark:text-white">Class:</label>
                 <select
                   value={editClass?.id || ''}
                   onChange={(e) => {
                     const selected = classList.find(c => c.id === e.target.value);
                     if (selected) setEditClass(selected);
                   }}
-                  className="w-full border rounded p-2 focus:outline-none focus:border-blue-500"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded p-2 focus:outline-none focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                 >
                   {classList.map(characterClass => (
                     <option key={characterClass.id} value={characterClass.id}>
@@ -170,18 +170,18 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
         ) : (
           <>
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold">{character.name}</h1>
+              <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{character.name}</h1>
             </div>
 
             {/* Tab Navigation */}
-            <div className="border-b border-gray-200 mb-6">
+            <div className="border-b border-gray-200 dark:border-gray-600 mb-6">
               <nav className="-mb-px flex space-x-8">
                 <button
                   onClick={() => setActiveTab('core')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'core'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Core
@@ -190,8 +190,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('reference')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'reference'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Reference
@@ -200,8 +200,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('inventory')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'inventory'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Inventory
@@ -210,8 +210,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('details')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'details'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Details
@@ -220,8 +220,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('WeaponsClassActions')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'WeaponsClassActions'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Weapons/Class Actions
@@ -230,8 +230,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('skills')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'skills'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Skills
@@ -240,8 +240,8 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
                   onClick={() => setActiveTab('spells')}
                   className={`py-2 px-1 border-b-2 font-medium text-sm ${
                     activeTab === 'spells'
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                      : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-500'
                   }`}
                 >
                   Spells
@@ -298,7 +298,7 @@ const CharacterDetails: React.FC<CharacterDetailsProps> = ({
             )}
 
             {/* Delete Button - Moved to bottom */}
-            <div className="mt-8 pt-6 border-t border-gray-200">
+            <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-600">
               <div className="flex justify-center">
                 <button
                   onClick={(e) => onDelete(e, character)}

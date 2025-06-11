@@ -160,20 +160,20 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
   }
 
   return (
-    <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
+    <div className="fixed inset-0 bg-white dark:bg-gray-900 z-50 overflow-y-auto transition-colors duration-200">
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">Create New Character</h2>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Create New Character</h2>
           <button
             onClick={handleClose}
-            className="p-2 text-gray-600 hover:text-gray-800"
+            className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white"
           >
             <FaTimes className="text-2xl" />
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+          <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded relative mb-6" role="alert">
             <strong className="font-bold">Error: </strong>
             <span className="block sm:inline">{error}</span>
           </div>
@@ -181,14 +181,14 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
 
         <form onSubmit={createCharacter} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Character Name
             </label>
             <input
               type="text"
               value={newCharacterName}
               onChange={(e) => setNewCharacterName(e.target.value)}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               placeholder="Enter character name"
               required
             />
@@ -196,7 +196,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
 
           {/* Species Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Species
             </label>
             <select
@@ -205,7 +205,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
                 const selected = speciesList.find(s => s.id === e.target.value);
                 setNewCharacterSpecies(selected || null);
               }}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               required
             >
               <option value="" disabled>Select a species</option>
@@ -218,7 +218,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
             {newCharacterSpecies && (
               <div className="mt-2 space-y-2">
                 {newCharacterSpecies.traits.map(trait => (
-                  <div key={trait.id} className="text-sm text-gray-600">
+                  <div key={trait.id} className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold">{trait.title}:</span> {trait.description}
                   </div>
                 ))}
@@ -228,7 +228,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
 
           {/* Background Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Background
             </label>
             <select
@@ -237,7 +237,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
                 const selected = backgroundList.find(b => b.id === e.target.value);
                 setNewCharacterBackground(selected || null);
               }}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               required
             >
               <option value="" disabled>Select a background</option>
@@ -250,7 +250,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
             {newCharacterBackground && (
               <div className="mt-2 space-y-2">
                 {newCharacterBackground.features.map(feature => (
-                  <div key={feature.id} className="text-sm text-gray-600">
+                  <div key={feature.id} className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold">{feature.title}:</span> {feature.description}
                   </div>
                 ))}
@@ -260,7 +260,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
 
           {/* Class Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Class
             </label>
             <select
@@ -269,7 +269,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
                 const selected = classList.find(c => c.id === e.target.value);
                 setNewCharacterClass(selected || null);
               }}
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
               required
             >
               <option value="" disabled>Select a class</option>
@@ -282,7 +282,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
             {newCharacterClass && (
               <div className="mt-2 space-y-2">
                 {newCharacterClass.features.map(feature => (
-                  <div key={feature.id} className="text-sm text-gray-600">
+                  <div key={feature.id} className="text-sm text-gray-600 dark:text-gray-400">
                     <span className="font-semibold">Level {feature.level} - {feature.title}:</span> {feature.description}
                   </div>
                 ))}
@@ -292,100 +292,100 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
 
           {/* Ability Scores Section */}
           <div className="mt-4">
-            <h4 className="font-medium mb-2">Ability Scores</h4>
+            <h4 className="font-medium mb-2 text-gray-800 dark:text-white">Ability Scores</h4>
             <div className="grid grid-cols-3 gap-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm">STR:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">STR:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterStrength}
                     onChange={(e) => setNewCharacterStrength(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterStrength) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterStrength) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterStrength) >= 0 ? '+' : ''}{calculateModifier(newCharacterStrength)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">DEX:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">DEX:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterDexterity}
                     onChange={(e) => setNewCharacterDexterity(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterDexterity) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterDexterity) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterDexterity) >= 0 ? '+' : ''}{calculateModifier(newCharacterDexterity)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">CON:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">CON:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterConstitution}
                     onChange={(e) => setNewCharacterConstitution(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterConstitution) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterConstitution) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterConstitution) >= 0 ? '+' : ''}{calculateModifier(newCharacterConstitution)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">INT:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">INT:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterIntelligence}
                     onChange={(e) => setNewCharacterIntelligence(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterIntelligence) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterIntelligence) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterIntelligence) >= 0 ? '+' : ''}{calculateModifier(newCharacterIntelligence)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">WIS:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">WIS:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterWisdom}
                     onChange={(e) => setNewCharacterWisdom(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterWisdom) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterWisdom) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterWisdom) >= 0 ? '+' : ''}{calculateModifier(newCharacterWisdom)}
                   </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <label className="text-sm">CHA:</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300">CHA:</label>
                 <div className="flex items-center gap-2">
                   <input
                     type="number"
                     value={newCharacterCharisma}
                     onChange={(e) => setNewCharacterCharisma(parseInt(e.target.value) || 0)}
-                    className="w-12 p-1 text-center border rounded"
+                    className="w-12 p-1 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-800 dark:text-white"
                     min="0"
                     max="99"
                   />
-                  <span className={`w-8 text-center ${calculateModifier(newCharacterCharisma) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  <span className={`w-8 text-center ${calculateModifier(newCharacterCharisma) >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {calculateModifier(newCharacterCharisma) >= 0 ? '+' : ''}{calculateModifier(newCharacterCharisma)}
                   </span>
                 </div>
@@ -396,7 +396,7 @@ const CharacterCreate: React.FC<CharacterCreateProps> = ({ onClose, onCharacterC
           <div className="flex justify-end space-x-2 mt-4">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
             >
               Create
             </button>
