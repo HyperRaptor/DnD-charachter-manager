@@ -4,6 +4,7 @@ import CharacterCreate from './components/CharacterCreate';
 import CharacterDelete from './components/CharacterDelete';
 import CharacterDetails from './components/CharacterDetails';
 import CharacterList from './components/CharacterList';
+import DarkModeToggle from './components/DarkModeToggle';
 import { Character, Species, Background, CharacterClass, Skill } from './types/character';
 
 function App() {
@@ -411,9 +412,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 dark:bg-slate-800 transition-colors duration-200">
+      <DarkModeToggle />
+      
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <div className="bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-300 px-4 py-3 rounded relative" role="alert">
           <strong className="font-bold">Error: </strong>
           <span className="block sm:inline">{error}</span>
         </div>

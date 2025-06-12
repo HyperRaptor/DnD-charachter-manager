@@ -317,10 +317,10 @@ const InventoryTab: React.FC<InventoryTabProps> = ({ character, apiUrl, onCharac
                   Weight (lbs)
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Total Weight
+                  Total<br/>Weight
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                  Actions
+                  
                 </th>
               </tr>
             </thead>

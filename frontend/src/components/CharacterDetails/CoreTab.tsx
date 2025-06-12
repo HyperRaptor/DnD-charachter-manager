@@ -25,15 +25,15 @@ const CoreTab: React.FC<CoreTabProps> = ({
           <button
             onClick={() => onLevelChange(character.level - 1)}
             disabled={character.level <= 1}
-            className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             -
           </button>
-          <span className="text-2xl font-bold w-12 text-center">{character.level}</span>
+          <span className="p-2 text-2xl font-bold w-12 text-center">{character.level}</span>
           <button
             onClick={() => onLevelChange(character.level + 1)}
             disabled={character.level >= 20}
-            className="p-2 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             +
           </button>

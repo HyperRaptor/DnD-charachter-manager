@@ -1,3 +1,111 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+
+/* Manual dark mode test styles */
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+}
+
+/* Force dark mode styles for testing */
+.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-gray-900 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-slate-800 {
+  background-color: #0f172a !important;
+}
+
+.dark .bg-slate-900 {
+  background-color: #0f172a !important;
+}
+
+.dark .text-gray-800 {
+  color: #ffffff !important;
+}
+
+.dark .text-gray-600 {
+  color: #d1d5db !important;
+}
+
+.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+/* Ensure padding works properly */
+.p-8 {
+  padding: 2rem !important;
+}
+
+.p-6 {
+  padding: 1.5rem !important;
+}
+
+.p-4 {
+  padding: 1rem !important;
+}
+
+.p-2 {
+  padding: 0.5rem !important;
+}
+
+/* Ensure border-2 and rounded-xl work with proper specificity */
+.border-2 {
+  border-width: 2px !important;
+  border-style: solid !important;
+}
+
+.rounded-xl {
+  border-radius: 0.75rem !important;
+}
+
+.shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+}
+
+.dark .shadow-md {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Border styles - lighter colors for better visibility with proper specificity */
+.dark .border-2.border-gray-300 {
+  border-color: #94a3b8 !important;
+}
+
+.dark .border-2.border-slate-600 {
+  border-color: #94a3b8 !important;
+}
+
+.dark .border-2.border-slate-700 {
+  border-color: #64748b !important;
+}
+
+.dark .border-2.border-slate-500 {
+  border-color: #cbd5e1 !important;
+}
+
+/* Hover states with proper specificity */
+.dark .hover\:bg-slate-800:hover {
+  background-color: #334155 !important;
+}
+
+.dark .hover\:border-slate-600:hover {
+  border-color: #cbd5e1 !important;
+}
+
+.dark .hover\:border-slate-500:hover {
+  border-color: #f1f5f9 !important;
+} 
