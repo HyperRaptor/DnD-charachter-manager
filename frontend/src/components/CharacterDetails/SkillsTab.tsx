@@ -142,25 +142,25 @@ const SkillsTab: React.FC<SkillsTabProps> = ({ character, onSkillChange }) => {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Roll
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Skill
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                Ability Mod
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
+                Ability<br/>Mod
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Proficiency
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Other
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Total
               </th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+              <th className="px-4 py-3 text-xs font-medium text-gray-600 uppercase tracking-wider" style={{ textAlign: 'center' }}>
                 Passive
               </th>
             </tr>
@@ -172,7 +172,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({ character, onSkillChange }) => {
               
               return (
                 <tr key={skill.name} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <button
                       onClick={() => handleSkillRoll(skill.name)}
                       className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-200"
@@ -181,17 +181,17 @@ const SkillsTab: React.FC<SkillsTabProps> = ({ character, onSkillChange }) => {
                       <FaDiceD20 className="text-sm" />
                     </button>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <span className="font-medium text-sm text-gray-800">
                       {skill.name}({skill.abilityAbbr})
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <span className="text-sm text-gray-600">
                       {skill.abilityModifier >= 0 ? '+' : ''}{skill.abilityModifier}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <select
                       value={skill.proficiency}
                       onChange={(e) => handleProficiencyChange(skill.name, e.target.value)}
@@ -204,7 +204,7 @@ const SkillsTab: React.FC<SkillsTabProps> = ({ character, onSkillChange }) => {
                       <option value="jack-of-all-trades">Jack of All Trades (+{Math.floor(getProficiencyBonus() / 2)})</option>
                     </select>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <input
                       type="number"
                       value={skill.other}
@@ -213,12 +213,12 @@ const SkillsTab: React.FC<SkillsTabProps> = ({ character, onSkillChange }) => {
                       placeholder="0"
                     />
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <span className="font-bold text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded">
                       {total >= 0 ? '+' : ''}{total}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" style={{ textAlign: 'center' }}>
                     <span className="font-bold text-sm bg-green-100 text-green-800 px-2 py-1 rounded">
                       {passive}
                     </span>
