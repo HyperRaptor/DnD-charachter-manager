@@ -556,37 +556,40 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                       Weapon
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Attack
+                      Attack<br />Type
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Stat
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Magic Bonus
+                      Magic<br />Bonus
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       To Hit
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Damage Dice
+                      Damage<br />Dice
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       + Stat?
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Dmg Bonus
+                      Dmg<br />Bonus
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Damage Type
+                      Damage<br />Type
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Crit Dmg
+                      Crit<br />Dmg
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                      Crit on a
+                      Crit<br />on a
                     </th>
                     <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                       Attack
+                    </th>
+                    <th className="px-2 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                      
                     </th>
                   </tr>
                 </thead>
@@ -594,7 +597,7 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                   {weapons.map((weapon) => (
                     <React.Fragment key={weapon.id}>
                       <tr className="hover:bg-gray-50">
-                        <td className="px-2 py-3">
+                        <td className="px-2 py-3" style={{ textAlign: 'center' }}>
                           <input
                             type="checkbox"
                             checked={weapon.proficient}
@@ -649,7 +652,7 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                             max="99"
                           />
                         </td>
-                        <td className="px-2 py-3">
+                        <td className="px-2 py-3" style={{ textAlign: 'center' }}>
                           <span className="text-sm font-medium text-gray-800">
                             {calculateToHit(weapon)}
                           </span>
@@ -663,7 +666,7 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                             placeholder="1d8"
                           />
                         </td>
-                        <td className="px-2 py-3">
+                        <td className="px-2 py-3" style={{ textAlign: 'center' }}>
                           <input
                             type="checkbox"
                             checked={weapon.plusStat}
@@ -671,7 +674,7 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                           />
                         </td>
-                        <td className="px-2 py-3">
+                        <td className="px-2 py-3" style={{ textAlign: 'center' }}>
                           <span className="text-sm font-medium text-gray-800">
                             {calculateDamageBonus(weapon)}
                           </span>
@@ -706,22 +709,20 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
                         </td>
                         <td className="px-2 py-3">
                           <button
+                            onClick={() => rollAttack(weapon)}
+                            className="w-full px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200 text-sm font-medium"
+                          >
+                            Roll Attack
+                          </button>
+                        </td>
+                        <td className="px-2 py-3" style={{ textAlign: 'center' }}>
+                          <button
                             onClick={() => removeWeapon(weapon.id)}
                             className={`p-1 ${weapons.length > 1 ? 'text-red-500 hover:text-red-700' : 'text-gray-400 cursor-not-allowed'}`}
                             title={weapons.length > 1 ? "Remove weapon" : "Cannot remove last weapon"}
                             disabled={weapons.length <= 1}
                           >
                             <FaTrash />
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colSpan={13} className="px-2 py-2">
-                          <button
-                            onClick={() => rollAttack(weapon)}
-                            className="w-full px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200 text-sm font-medium"
-                          >
-                            Roll Attack
                           </button>
                         </td>
                       </tr>
@@ -756,22 +757,22 @@ const SpellsWeaponsTab: React.FC<SpellsWeaponsTabProps> = ({ character, apiUrl, 
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                    Action Name
+                    Action<br />Name
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
                     Description
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                    Gained From
+                    Gained<br />From
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                    Currently Used
+                    Curr<br />Used
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                    Max Uses
+                    Max<br />Uses
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
-                    Actions
+                    
                   </th>
                 </tr>
               </thead>
